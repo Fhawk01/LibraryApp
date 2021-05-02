@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package DataLayer;
 
 import java.io.FileInputStream;
@@ -13,23 +8,26 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 
 /**
  *
- * @author johnk
+ * 
  */
 public abstract class DataManager {
 
-    private String hostName;
-    private String databaseName;
-    private String userName;
-    private String password;
 
     protected Connection getConnection() throws SQLException {
-        String connectionString = String.format("jdbc:sqlserver://%s:1433;database=%s;user=%s;password=%s;encrypt=true;hostNameInCertificate=*.database.windows.net;logonTimeout=30;",
-                hostName, databaseName, userName, password);
-
-        return DriverManager.getConnection(connectionString);
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            String url="jdbc:sqlserver://localhost:1433;databaseName=books;user=sa;password=pass";
+            Connection con = DriverManager.getConnection(url);
+            return con;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+        return null;
     }
 
     public DataManager() {
@@ -51,10 +49,5 @@ public abstract class DataManager {
             return;
         }
         
-        
-        this.hostName = properties.getProperty("db.host");
-        this.databaseName = properties.getProperty("db.name");
-        this.userName = properties.getProperty("db.user");
-        this.password = properties.getProperty("db.password");
     }
 }

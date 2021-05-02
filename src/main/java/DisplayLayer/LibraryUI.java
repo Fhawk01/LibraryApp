@@ -5,6 +5,16 @@
  */
 package DisplayLayer;
 
+import BuisnessLayer.Book;
+import java.util.*;
+import DataLayer.DataManager;
+import DataLayer.bookDataManager;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Faith
@@ -13,9 +23,58 @@ public class LibraryUI extends javax.swing.JFrame {
 
     /**
      * Creates new form LibraryUI
+     * 
      */
-    public LibraryUI() {
+    public LibraryUI() throws SQLException {
         initComponents();
+        
+       show_books();
+        
+        
+    }
+    public ArrayList<Book> book() throws SQLException{
+        ArrayList<Book> booksList = new ArrayList<>();
+        
+        try{
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            String url="jdbc:sqlserver://localhost:1433;databaseName=books;user=sa;password=pass";
+            Connection con = DriverManager.getConnection(url);
+            String query1 ="SELECT * FROM book_details";
+            Statement st= con.createStatement();
+            ResultSet rs= st.executeQuery(query1);
+            Book book;
+            while(rs.next()){
+                book=new Book(rs.getInt("ID"), rs.getString("title"),rs.getString("author"), rs.getString("series"));
+                booksList.add(book);
+            }
+            
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+        //ArrayList<Book> bookList = new ArrayList<Book>();
+        //bookDataManager bookDm = new bookDataManager();
+        
+        //bookList = bookDm.getAll();
+        
+        return booksList;
+
+    }
+    
+    public void show_books() throws SQLException{
+        
+        ArrayList<Book> list = book();
+        DefaultTableModel model = (DefaultTableModel)DisplayTable.getModel();
+        Object[] row = new Object[4];
+        for (int i=0;i<list.size();i++){
+            row[0] = list.get(i).getBookID();
+            row[1] = list.get(i).getTitle();
+            row[2]= list.get(i).getAuthor();
+            row[3]=list.get(i).getSeries();
+            model.addRow(row);
+            
+        }
     }
 
     /**
@@ -27,17 +86,12 @@ public class LibraryUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        list1 = new java.awt.List();
         btnExit = new javax.swing.JButton();
         btnHome = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        DisplayTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        list1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                list1ActionPerformed(evt);
-            }
-        });
 
         btnExit.setText("Exit");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -53,26 +107,43 @@ public class LibraryUI extends javax.swing.JFrame {
             }
         });
 
+        DisplayTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "BookID", "Title", "Author", "Series"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(DisplayTable);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(list1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnHome)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 425, Short.MAX_VALUE)
-                        .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(btnHome)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 744, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHome, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -81,10 +152,6 @@ public class LibraryUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void list1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_list1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_list1ActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         // TODO add your handling code here:
@@ -128,14 +195,20 @@ public class LibraryUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LibraryUI().setVisible(true);
+                try {
+                    new LibraryUI().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(LibraryUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable DisplayTable;
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnHome;
-    private java.awt.List list1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

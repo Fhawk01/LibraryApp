@@ -1,6 +1,9 @@
 package DisplayLayer;
      import java.awt.event.ActionEvent;
      import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
      import javax.swing.JButton;
      import javax.swing.JFrame;
      import javax.swing.SwingUtilities;
@@ -147,10 +150,14 @@ public class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        LibraryUI lUI=new LibraryUI();
-        lUI.setVisible(true);
-        setVisible(false); //to hide the log in frame
+        try {
+            // TODO add your handling code here:
+            LibraryUI lUI=new LibraryUI();
+            lUI.setVisible(true);
+            setVisible(false); //to hide the log in frame
+        } catch (SQLException ex) {
+            Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
